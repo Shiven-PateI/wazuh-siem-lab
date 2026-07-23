@@ -1,0 +1,64 @@
+INCIDENT REPORT — IR-001
+========================
+Date: July 23, 2026
+Analyst: Shiven Patel
+Severity: Medium
+Status: Investigated — False Positive (Self-Generated)
+
+SUMMARY
+-------
+Wazuh SIEM detected 5 consecutive failed authentication 
+attempts on Windows-Endpoint within a 10-second window, 
+triggering Rule ID 60122.
+
+ALERT DETAILS
+-------------
+Rule ID: 60122
+Description: Logon failure - Unknown user or bad password
+MITRE Technique: T1078 (Valid Accounts), T1531 (Account 
+Access Removal)
+MITRE Tactics: Initial Access, Persistence, Privilege 
+Escalation, Defense Evasion, Impact
+Source IP: 10.0.0.4
+Affected Host: Windows-Endpoint
+Time: July 23, 2026 @ 12:25 - 12:33 UTC
+Alert Level: 5
+
+ANALYSIS
+--------
+Five failed logon attempts were detected in rapid succession 
+on the Windows-Endpoint machine. The pattern is consistent 
+with a brute force credential attack — an automated or 
+manual attempt to gain unauthorized access by guessing 
+passwords.
+
+The MITRE ATT&CK mapping to T1078 (Valid Accounts) indicates 
+an attacker may be attempting to authenticate using 
+legitimate account names with incorrect passwords, which 
+is a common initial access technique.
+
+In a real enterprise environment this pattern would warrant:
+1. Immediate account lockout review
+2. Source IP investigation and potential blocking
+3. Notification to the account owner
+4. Escalation to Tier 2 if attempts continue
+
+DISPOSITION
+-----------
+Confirmed false positive — alert was self-generated as 
+part of home lab simulation to test SIEM detection 
+capabilities. No actual threat present.
+
+LESSONS LEARNED
+---------------
+Wazuh successfully detected and categorized the brute 
+force pattern within seconds, automatically mapping it 
+to the correct MITRE ATT&CK framework techniques. In a 
+real SOC environment this detection speed would 
+significantly reduce attacker dwell time.
+
+RECOMMENDATION
+--------------
+In production: implement account lockout policy after 
+3 failed attempts and alert on any account with 5+ 
+failures within 60 seconds for immediate Tier 2 review.

@@ -1,0 +1,73 @@
+
+INCIDENT REPORT — IR-002
+========================
+Date: July 30, 2026
+Analyst: Shiven Patel
+Severity: Medium
+Status: Investigated — Simulated Activity
+
+SUMMARY
+-------
+Wazuh File Integrity Monitoring detected a sequence of 
+file system events in C:\wazuh-test\ consistent with 
+malware payload behavior — file creation, modification, 
+deletion, and new file introduction within a 6-minute window.
+
+ALERT DETAILS
+-------------
+Rule IDs: 554 (File Added), 550 (Integrity Checksum 
+Changed), 553 (File Deleted)
+Monitored Path: C:\wazuh-test\
+Affected Host: Windows-Endpoint
+Time Window: 15:57 – 16:03 UTC, July 30, 2026
+Alert Levels: 5 (added/new file), 7 (modified/deleted)
+
+TIMELINE
+--------
+15:57 — test.txt created (Rule 554, Level 5)
+16:01 — test.txt modified, integrity checksum changed 
+        (Rule 550, Level 7)
+16:02 — test.txt deleted (Rule 553, Level 7)
+16:03 — malware-sim.txt introduced (Rule 554, Level 5)
+
+ANALYSIS
+--------
+The sequence of events — file creation, modification, 
+deletion, and new file introduction — mirrors a common 
+malware execution pattern:
+
+1. Dropper creates initial payload file
+2. Payload is modified or unpacked
+3. Original file deleted to cover tracks
+4. Secondary payload or persistence file introduced
+
+The elevated severity on modification (Level 7) and 
+deletion (Level 7) versus creation (Level 5) reflects 
+Wazuh's risk weighting — changes to existing files and 
+deletions carry higher risk than new file creation.
+
+In a real enterprise environment this pattern would 
+trigger immediate Tier 2 escalation and endpoint 
+isolation pending investigation.
+
+DISPOSITION
+-----------
+Confirmed simulated activity — files created manually 
+via PowerShell to test FIM detection capabilities. 
+No actual threat present.
+
+LESSONS LEARNED
+---------------
+FIM successfully detected all four file system events 
+in real time with accurate rule classification. The 
+integrity checksum change detection (Rule 550) is 
+particularly valuable — it catches file modifications 
+even when the filename remains unchanged, which is how 
+most malware operates in practice.
+
+RECOMMENDATION
+--------------
+In production: implement automated response rules to 
+isolate endpoints showing this pattern within 60 seconds 
+of detection. Alert on any file deleted within 5 minutes 
+of creation in sensitive directories.
